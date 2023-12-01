@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CouponModule } from './coupon/coupon.module';
 import { RewardModule } from './reward/reward.module';
+import { PlayerModule } from './player/player.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RewardModule } from './reward/reward.module';
     }),
     CouponModule,
     RewardModule,
+    PlayerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

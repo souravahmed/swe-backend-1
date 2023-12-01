@@ -1,11 +1,15 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
+import { PlayerExistByIdValidation } from 'src/player/validators';
+import { RewardExistByIdValidation } from 'src/reward/validators';
 
 export class CouponRedeemDto {
   @IsNotEmpty()
   @IsNumber()
-  playerId: string;
+  @Validate(PlayerExistByIdValidation)
+  playerId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  rewardId: string;
+  @Validate(RewardExistByIdValidation)
+  rewardId: number;
 }
