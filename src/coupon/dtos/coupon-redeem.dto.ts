@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, Validate } from 'class-validator';
-import { PlayerExistByIdValidation } from 'src/player/validators';
-import { RewardExistByIdValidation } from 'src/reward/validators';
+import { PlayerExistByIdValidation } from '../../player/validators';
+import { RewardExistByIdValidation } from '../../reward/validators';
 
 export class CouponRedeemDto {
   @IsNotEmpty()

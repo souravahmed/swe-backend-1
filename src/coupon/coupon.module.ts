@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CouponService } from './services/coupon.service';
 import { CouponController } from './controllers/coupon.controller';
-import { RewardModule } from 'src/reward/reward.module';
+import { RewardModule } from '../reward/reward.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Coupon, PlayerCoupon } from 'src/entities';
-import { PlayerModule } from 'src/player/player.module';
+import { Coupon, PlayerCoupon } from '../entities';
+import { PlayerModule } from '../player/player.module';
 
 @Module({
   imports: [

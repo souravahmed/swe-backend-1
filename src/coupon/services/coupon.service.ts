@@ -1,11 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Coupon, PlayerCoupon } from 'src/entities';
+import { Coupon, PlayerCoupon } from '../../entities';
 import { Between, DataSource, In, Repository } from 'typeorm';
 import { CouponRedeemDto } from '../dtos';
-import { RewardService } from 'src/reward/services';
-import { StringUtil } from 'src/common/utils';
-import { PlayerService } from 'src/player/services';
+import { RewardService } from '../../reward/services';
+import { StringUtil } from '../../common/utils';
+import { PlayerService } from '../../player/services';
 
 @Injectable()
 export class CouponService {
@@ -81,7 +81,6 @@ export class CouponService {
       await queryRunner.rollbackTransaction();
       throw new Error('Something went wrong');
     } finally {
-      console.log('released');
       await queryRunner.release();
     }
   }

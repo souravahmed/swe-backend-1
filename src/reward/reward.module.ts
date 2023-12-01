@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RewardService } from './services';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Reward } from 'src/entities';
+import { Reward } from '../entities';
 import { RewardExistByIdValidation } from './validators';
 
 @Module({
