@@ -1,9 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Coupon, PlayerCoupon } from 'src/entities';
-import { Between, In, Repository } from 'typeorm';
+import { Between, DataSource, In, Repository } from 'typeorm';
 import { CouponRedeemDto } from '../dtos';
 import { RewardService } from 'src/reward/services';
+import { StringUtil } from 'src/common/utils';
+import { PlayerService } from 'src/player/services';
 
 @Injectable()
 export class CouponService {
@@ -13,9 +15,18 @@ export class CouponService {
     @InjectRepository(PlayerCoupon)
     private playerCouponRepository: Repository<PlayerCoupon>,
     private rewardService: RewardService,
+    private playerService: PlayerService,
+    private dataSource: DataSource,
   ) {}
 
   async couponRedeem(couponRedeemDto: CouponRedeemDto) {
+    const isCouponAlreadyRedeemed = await this.isCouponAlreadyRedeemed(
+      couponRedeemDto.playerId,
+      couponRedeemDto.rewardId,
+    );
+    if (isCouponAlreadyRedeemed)
+      throw new BadRequestException('Coupon already redeemed');
+
     const isValidReward =
       await this.rewardService.isRewardValidWithInStartDateAndEndDate(
         couponRedeemDto.rewardId,
@@ -30,6 +41,9 @@ export class CouponService {
     const reward = await this.rewardService.getRewardById(
       couponRedeemDto.rewardId,
     );
+    const player = await this.playerService.getPlayerById(
+      couponRedeemDto.playerId,
+    );
     if (numberOfRedeemedCouponsToday === reward.perDayLimit)
       throw new BadRequestException(
         'Sorry per day coupon redeem limit exceeded',
@@ -43,6 +57,33 @@ export class CouponService {
 
     if (numberOfRedeemedCouponsDuringCampaign === reward.totalLimit)
       throw new BadRequestException('Sorry total coupon redeem limit exceeded');
+
+    const generatedCoupon = 'EID-' + StringUtil.getRandomNumber(6);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const newCoupon = await queryRunner.manager.save(Coupon, {
+        value: generatedCoupon,
+        Reward: reward,
+      });
+      await queryRunner.manager.save(PlayerCoupon, {
+        player: player,
+        coupon: newCoupon,
+        redeemedAt: new Date(),
+      });
+      await queryRunner.commitTransaction();
+      const { id, value } = newCoupon;
+      return { id, value };
+    } catch (e) {
+      console.log(e);
+      await queryRunner.rollbackTransaction();
+      throw new Error('Something went wrong');
+    } finally {
+      console.log('released');
+      await queryRunner.release();
+    }
   }
 
   async getNumberOfCouponRedeemedToday(playerId: number) {
@@ -51,7 +92,10 @@ export class CouponService {
     let endDate = new Date();
     endDate.setHours(23, 59, 59, 999);
     return await this.playerCouponRepository.count({
-      where: { id: playerId, redeemedAt: Between(startDate, endDate) },
+      where: {
+        player: { id: playerId },
+        redeemedAt: Between(startDate, endDate),
+      },
     });
   }
 
@@ -66,10 +110,22 @@ export class CouponService {
     const reward = await this.rewardService.getRewardById(rewardId);
     return await this.playerCouponRepository.count({
       where: {
-        id: playerId,
+        player: { id: playerId },
         coupon: { id: In(couponIds) },
         redeemedAt: Between(reward.startDate, reward.endDate),
       },
     });
+  }
+
+  async isCouponAlreadyRedeemed(playerId: number, rewardId: number) {
+    const existRedeemedCoupon = await this.playerCouponRepository.count({
+      where: {
+        player: { id: playerId },
+        coupon: {
+          Reward: { id: rewardId },
+        },
+      },
+    });
+    return existRedeemedCoupon ? true : false;
   }
 }

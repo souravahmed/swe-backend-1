@@ -4,7 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { PlayerService } from '../services/player.service';
+import { PlayerService } from '../services';
 
 @ValidatorConstraint({ name: 'playerId', async: true })
 @Injectable()

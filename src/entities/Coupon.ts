@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Reward } from './Reward';
 @Entity()
 export class Coupon {
@@ -15,6 +9,5 @@ export class Coupon {
   value: string;
 
   @ManyToOne(() => Reward)
-  @JoinColumn()
   Reward: Reward;
 }

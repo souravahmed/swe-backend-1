@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CouponModule } from './coupon/coupon.module';
 import { RewardModule } from './reward/reward.module';
 import { PlayerModule } from './player/player.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PlayerModule } from './player/player.module';
     CouponModule,
     RewardModule,
     PlayerModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

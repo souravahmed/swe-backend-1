@@ -7,5 +7,6 @@ import { PlayerExistByIdValidation } from './validators';
 @Module({
   imports: [TypeOrmModule.forFeature([Player])],
   providers: [PlayerExistByIdValidation, PlayerService],
+  exports: [PlayerService],
 })
 export class PlayerModule {}
