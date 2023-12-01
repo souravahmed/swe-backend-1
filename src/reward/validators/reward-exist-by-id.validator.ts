@@ -4,7 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { RewardService } from '../services/reward.service';
+import { RewardService } from '../services';
 
 @ValidatorConstraint({ name: 'rewardId', async: true })
 @Injectable()

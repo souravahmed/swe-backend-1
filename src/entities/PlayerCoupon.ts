@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Player } from './Player';
 import { Coupon } from './Coupon';
@@ -16,6 +17,7 @@ export class PlayerCoupon {
   player: Player;
 
   @ManyToOne(() => Coupon)
+  @JoinColumn()
   coupon: Coupon;
 
   @CreateDateColumn()

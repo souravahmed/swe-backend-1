@@ -8,6 +8,6 @@ export class CouponController {
 
   @Post('coupon-redeem')
   couponRedeem(@Body() couponRedeemDto: CouponRedeemDto) {
-    return couponRedeemDto;
+    return this.couponService.couponRedeem(couponRedeemDto);
   }
 }
